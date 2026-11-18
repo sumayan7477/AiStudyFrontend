@@ -18,6 +18,7 @@ import {
 } from '@heroicons/react/24/outline';
 import AuthButton from '../auth/AuthButton';
 import ThemeToggle from '../ui/ThemeToggle';
+import { useAuth } from '../../context/useAuth';
 
 interface NavbarProps {
   isAuthenticated?: boolean;
@@ -28,6 +29,7 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated = false, onLogout }) =>
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user } = useAuth();
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -82,13 +84,19 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated = false, onLogout }) =>
 
           {/* Mobile Menu Button */}
           <div className="dropdown lg:hidden">
-            <label tabIndex={0} className="btn btn-ghost btn-circle" onClick={toggleMobileMenu}>
+            <button
+              type="button"
+              className="btn btn-ghost btn-circle"
+              onClick={toggleMobileMenu}
+              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isMobileMenuOpen}
+            >
               {isMobileMenuOpen ? (
-                <XMarkIcon className="h-6 w-6" />
+                <XMarkIcon className="h-6 w-6" aria-hidden="true" />
               ) : (
-                <Bars3Icon className="h-6 w-6" />
+                <Bars3Icon className="h-6 w-6" aria-hidden="true" />
               )}
-            </label>
+            </button>
             <ul 
               tabIndex={0} 
               className={`menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-lg bg-base-100 rounded-box w-52 ${isMobileMenuOpen ? 'block' : 'hidden'}`}
@@ -195,17 +203,18 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated = false, onLogout }) =>
           </ul>
 
           {/* Sidebar Footer / User Info */}
-          {isAuthenticated && (
+          {/* The signed-in user (previously a hardcoded "John Doe"). */}
+          {isAuthenticated && user && (
             <div className="mt-8 pt-4 border-t border-base-200">
               <div className="flex items-center gap-3 px-4 py-2">
                 <div className="avatar placeholder">
                   <div className="bg-primary text-primary-content rounded-full w-10">
-                    <span className="text-sm">JD</span>
+                    <span className="text-sm">{user.fullName.trim().charAt(0).toUpperCase()}</span>
                   </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-sm">John Doe</p>
-                  <p className="text-xs opacity-60">Student</p>
+                <div className="min-w-0">
+                  <p className="truncate font-semibold text-sm">{user.fullName}</p>
+                  {user.roles?.[0] && <p className="text-xs opacity-60">{user.roles[0]}</p>}
                 </div>
               </div>
             </div>

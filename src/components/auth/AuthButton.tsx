@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../../context/useAuth';
 
 interface AuthButtonProps {
   isAuthenticated?: boolean;
@@ -13,17 +14,16 @@ const AuthButton: React.FC<AuthButtonProps> = ({
   onLogout,
   className = ''
 }) => {
+  const { user } = useAuth();
+
   if (isAuthenticated) {
     return (
       <div className={`flex items-center gap-2 ${className}`}>
         <div className="dropdown dropdown-end">
-          <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-            <div className="w-10 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
-              <img 
-                src="https://api.dicebear.com/7.x/avataaars/svg?seed=user" 
-                alt="avatar" 
-                className="rounded-full"
-              />
+          {/* Initial instead of a third-party avatar image (no request to an external service). */}
+          <label tabIndex={0} className="btn btn-ghost btn-circle avatar placeholder" aria-label="Account menu">
+            <div className="w-10 rounded-full bg-primary text-primary-content ring ring-primary ring-offset-2 ring-offset-base-100">
+              <span className="text-sm font-semibold" aria-hidden="true">{user?.fullName?.trim().charAt(0).toUpperCase() || "?"}</span>
             </div>
           </label>
           <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-lg bg-base-100 rounded-box w-52">

@@ -1,4 +1,7 @@
+import { lazy } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+
+import { RouteBoundary } from "../components/layout/RouteOutlet";
 
 import MainLayout from "../layouts/MainLayout";
 import AuthLayout from "../layouts/AuthLayout";
@@ -7,33 +10,35 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
 
-import Home from "../pages/Home";
-import Login from "../pages/Login/Login";
-import Register from "../pages/Register/Register";
+// Pages are loaded on demand (route-based code splitting); layouts and route guards stay in the main bundle.
+// The import paths are unchanged, so each resolves to the same file as before.
+const Home = lazy(() => import("../pages/Home"));
+const Login = lazy(() => import("../pages/Login/Login"));
+const Register = lazy(() => import("../pages/Register/Register"));
 
 // Explicit path: "../pages/Dashboard" would resolve to the old static stub pages/Dashboard.tsx.
-import Dashboard from "../pages/Dashboard/index";
-import Chat from "../pages/Chat";
-import StudyPlans from "../pages/StudyPlans";
-import StudyPlanDetails from "../pages/StudyPlans/Details";
+const Dashboard = lazy(() => import("../pages/Dashboard/index"));
+const Chat = lazy(() => import("../pages/Chat"));
+const StudyPlans = lazy(() => import("../pages/StudyPlans"));
+const StudyPlanDetails = lazy(() => import("../pages/StudyPlans/Details"));
 
-import Quizzes from "../pages/Quizzes";
-import Quiz from "../pages/Quizzes/Quiz";
-import QuizResult from "../pages/Quizzes/Result";
+const Quizzes = lazy(() => import("../pages/Quizzes"));
+const Quiz = lazy(() => import("../pages/Quizzes/Quiz"));
+const QuizResult = lazy(() => import("../pages/Quizzes/Result"));
 
-import Notes from "../pages/Notes";
-import NoteDetails from "../pages/Notes/Details";
+const Notes = lazy(() => import("../pages/Notes"));
+const NoteDetails = lazy(() => import("../pages/Notes/Details"));
 
-import Flashcards from "../pages/Flashcards";
-import FlashcardDetails from "../pages/Flashcards/Details";
+const Flashcards = lazy(() => import("../pages/Flashcards"));
+const FlashcardDetails = lazy(() => import("../pages/Flashcards/Details"));
 
-import Progress from "../pages/Progress";
-import Gamification from "../pages/Gamification";
-import Activity from "../pages/Activity";
-import Profile from "../pages/Profile";
-import Settings from "../pages/Settings";
+const Progress = lazy(() => import("../pages/Progress"));
+const Gamification = lazy(() => import("../pages/Gamification"));
+const Activity = lazy(() => import("../pages/Activity"));
+const Profile = lazy(() => import("../pages/Profile"));
+const Settings = lazy(() => import("../pages/Settings"));
 
-import NotFound from "../pages/NotFound";
+const NotFound = lazy(() => import("../pages/NotFound"));
 
 export default function AppRoutes() {
     return (
@@ -89,7 +94,7 @@ export default function AppRoutes() {
 
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-            <Route path="*" element={<NotFound />} />
+            <Route path="*" element={<RouteBoundary><NotFound /></RouteBoundary>} />
 
         </Routes>
     );

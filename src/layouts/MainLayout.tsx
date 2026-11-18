@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import RouteOutlet from '../components/layout/RouteOutlet';
 import Navbar from '../components/navbar/Navbar';
 import { useAuth } from '../context/useAuth';
 
@@ -10,7 +10,7 @@ const MainLayout: React.FC = () => {
     <div className="min-h-screen bg-base-200">
       <Navbar isAuthenticated={isAuthenticated} onLogout={logout} />
       <main className="container mx-auto px-4 py-8">
-        <Outlet />
+        <RouteOutlet />
       </main>
       <footer className="footer footer-center p-4 bg-base-300 text-base-content">
         <aside>

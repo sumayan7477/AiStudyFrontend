@@ -5,16 +5,19 @@ interface SidebarItemProps {
     name: string;
     path: string;
     icon: LucideIcon;
+    onNavigate?: () => void;
 }
 
 const SidebarItem = ({
     name,
     path,
     icon: Icon,
+    onNavigate,
 }: SidebarItemProps) => {
     return (
         <NavLink
             to={path}
+            onClick={onNavigate}
             className={({ isActive }) =>
                 `flex items-center gap-3 rounded-lg px-4 py-3 transition-all duration-200
                 ${
@@ -24,7 +27,7 @@ const SidebarItem = ({
                 }`
             }
         >
-            <Icon size={20} />
+            <Icon size={20} aria-hidden="true" />
             <span>{name}</span>
         </NavLink>
     );

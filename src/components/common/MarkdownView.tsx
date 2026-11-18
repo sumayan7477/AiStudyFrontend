@@ -15,11 +15,15 @@ interface MarkdownViewProps {
  * URL filter removes unsafe link targets such as javascript: URLs.
  * Styling: Tailwind classes per element (the project has no typography plugin).
  */
+// Headings are rendered one level lower than written (# -> <h2>, ## -> <h3>, ...), with the same look:
+// the page title is the only <h1>, so the document outline stays valid for screen readers.
 const components: Components = {
-    h1: ({ children }) => <h1 className="mb-4 mt-6 text-2xl font-bold first:mt-0">{children}</h1>,
-    h2: ({ children }) => <h2 className="mb-3 mt-6 text-xl font-bold first:mt-0">{children}</h2>,
-    h3: ({ children }) => <h3 className="mb-2 mt-5 text-lg font-semibold first:mt-0">{children}</h3>,
-    h4: ({ children }) => <h4 className="mb-2 mt-4 font-semibold first:mt-0">{children}</h4>,
+    h1: ({ children }) => <h2 className="mb-4 mt-6 text-2xl font-bold first:mt-0">{children}</h2>,
+    h2: ({ children }) => <h3 className="mb-3 mt-6 text-xl font-bold first:mt-0">{children}</h3>,
+    h3: ({ children }) => <h4 className="mb-2 mt-5 text-lg font-semibold first:mt-0">{children}</h4>,
+    h4: ({ children }) => <h5 className="mb-2 mt-4 font-semibold first:mt-0">{children}</h5>,
+    h5: ({ children }) => <h6 className="mb-2 mt-4 font-semibold first:mt-0">{children}</h6>,
+    h6: ({ children }) => <h6 className="mb-2 mt-4 font-semibold first:mt-0">{children}</h6>,
     p: ({ children }) => <p className="mb-4 leading-relaxed">{children}</p>,
     ul: ({ children }) => <ul className="mb-4 list-disc space-y-1 pl-6">{children}</ul>,
     ol: ({ children }) => <ol className="mb-4 list-decimal space-y-1 pl-6">{children}</ol>,

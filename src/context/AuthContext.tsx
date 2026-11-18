@@ -17,6 +17,7 @@ import {
     getToken,
     getTokenExpiry,
     isTokenExpired,
+    TOKEN_STORAGE_KEY,
     setStoredUser,
     setToken as storeToken,
 } from "../utils/token";
@@ -60,12 +61,14 @@ export const AuthProvider = ({ children }: Props) => {
     const [expiresAt, setExpiresAt] = useState<Date | null>(null);
     const [loading, setLoading] = useState<boolean>(pendingToken !== null);
 
-    // Lets callbacks know whether a session is active without depending on state.
+    // Lets callbacks know whether a session is active (and whose) without depending on state.
     const sessionActive = useRef(false);
+    const userIdRef = useRef<string | null>(null);
 
     const endSession = useCallback((reason?: "expired") => {
         const wasActive = sessionActive.current;
         sessionActive.current = false;
+        userIdRef.current = null;
 
         clearAuthStorage();
         setUser(null);
@@ -81,6 +84,7 @@ export const AuthProvider = ({ children }: Props) => {
 
     const startSession = useCallback((newToken: string, newUser: User, expiry: Date | null) => {
         sessionActive.current = true;
+        userIdRef.current = newUser.id;
         setStoredUser(newUser);
         setUser(newUser);
         setTokenState(newToken);
@@ -89,6 +93,34 @@ export const AuthProvider = ({ children }: Props) => {
 
     // React to 401s from any request (token expired, revoked, user deactivated).
     useEffect(() => onUnauthorized(() => endSession("expired")), [endSession]);
+
+    // Keep tabs in sync: logging out (or logging in as someone else) in another tab changes the stored
+    // token; this tab must not keep showing the old user while its requests use the new token.
+    useEffect(() => {
+        const onStorage = (e: StorageEvent) => {
+            if (e.key !== TOKEN_STORAGE_KEY && e.key !== null) return; // null = storage cleared
+            if (!sessionActive.current) return;
+
+            const newToken = getToken();
+            if (!newToken || isTokenExpired(newToken)) {
+                endSession();
+                return;
+            }
+
+            // A new login in another tab. Same account: just use the new token. Different account: reload,
+            // so no page keeps showing the previous account's data under the new account's name.
+            authService.me().then(
+                (currentUser) => {
+                    if (currentUser.id === userIdRef.current) startSession(newToken, currentUser, getTokenExpiry(newToken));
+                    else window.location.reload();
+                },
+                () => endSession(),
+            );
+        };
+
+        window.addEventListener("storage", onStorage);
+        return () => window.removeEventListener("storage", onStorage);
+    }, [endSession, startSession]);
 
     // Validate a stored token on startup.
     useEffect(() => {

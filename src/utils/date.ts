@@ -40,6 +40,14 @@ export function formatDateOnly(value: string): string {
     return date ? dateOnlyFormat.format(date) : "";
 }
 
+const shortDateUtcFormat = new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", timeZone: "UTC" });
+
+/** Short calendar date of a midnight-UTC value, e.g. "Nov 18" (formatted in UTC, see formatDateOnly). */
+export function formatShortDateUtc(value: string): string {
+    const date = toDate(value);
+    return date ? shortDateUtcFormat.format(date) : "";
+}
+
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /** Today's date in the user's time zone as "YYYY-MM-DD" (for <input type="date">). */

@@ -3,14 +3,23 @@ import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
 
 const ThemeToggle: React.FC = () => {
   const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
+    let savedTheme: string | null = null;
+    try {
+      savedTheme = localStorage.getItem('theme');
+    } catch {
+      // storage blocked (private mode / browser settings): fall back to the system preference
+    }
     if (savedTheme) return savedTheme;
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
+    try {
+      localStorage.setItem('theme', theme);
+    } catch {
+      // storage blocked: the choice simply is not remembered
+    }
   }, [theme]);
 
   const toggleTheme = () => {
