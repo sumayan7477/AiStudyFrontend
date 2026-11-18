@@ -1,3 +1,5 @@
+import { isGuid } from "./id";
+
 /** Chat limits and helpers that mirror the API (AiRequestLimits, ChatService, ChatResponseDto). */
 
 export const CHAT_PROMPT_MAX_LENGTH = 4000;
@@ -13,10 +15,8 @@ const TRUNCATION_NOTICE =
     "\n\n[Response incomplete: the answer was cut off because it reached the length limit. " +
     "Ask a follow-up question such as \"please continue\" to get the rest.]";
 
-const GUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
 export function isSessionId(value: string): boolean {
-    return GUID.test(value);
+    return isGuid(value);
 }
 
 export function validateChatPrompt(prompt: string): string | undefined {

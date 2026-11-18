@@ -9,6 +9,8 @@ interface ConfirmDialogProps {
     /** Shows a busy label and disables both buttons while the action runs. */
     busy?: boolean;
     busyLabel?: string;
+    /** "danger" (default) for destructive actions, "primary" for others (e.g. submitting a quiz). */
+    tone?: "danger" | "primary";
     onConfirm: () => void;
     onCancel: () => void;
 }
@@ -22,6 +24,7 @@ const ConfirmDialog = ({
     cancelLabel = "Cancel",
     busy = false,
     busyLabel = "Deleting...",
+    tone = "danger",
     onConfirm,
     onCancel,
 }: ConfirmDialogProps) => {
@@ -56,7 +59,7 @@ const ConfirmDialog = ({
                 onClick={(e) => e.stopPropagation()}
             >
                 <h2 id="confirm-dialog-title" className="mb-2 text-lg font-semibold text-gray-900">{title}</h2>
-                <p id="confirm-dialog-message" className="mb-6 break-words text-sm text-gray-600">{message}</p>
+                <p id="confirm-dialog-message" className="mb-6 whitespace-pre-line break-words text-sm text-gray-600">{message}</p>
 
                 <div className="flex justify-end gap-3">
                     <button
@@ -72,7 +75,7 @@ const ConfirmDialog = ({
                         type="button"
                         onClick={onConfirm}
                         disabled={busy}
-                        className="rounded-lg bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700 disabled:opacity-60"
+                        className={`rounded-lg px-4 py-2 text-sm text-white disabled:opacity-60 ${tone === "danger" ? "bg-red-600 hover:bg-red-700" : "bg-indigo-600 hover:bg-indigo-700"}`}
                     >
                         {busy ? busyLabel : confirmLabel}
                     </button>

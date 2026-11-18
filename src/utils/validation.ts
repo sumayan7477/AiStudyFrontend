@@ -123,6 +123,66 @@ export function validateStudyPlan(
     return errors;
 }
 
+/** Quiz limits (AiRequestLimits / GenerateQuizDto on the API). */
+export const QUIZ_QUESTIONS_MIN = 1;
+export const QUIZ_QUESTIONS_MAX = 20;
+export const QUIZ_DIFFICULTY_VALUES = ["Easy", "Medium", "Hard"] as const;
+
+export interface QuizFormValues {
+    topic: string;
+    difficulty: string;
+    /** Raw input value (the number field can be empty while typing). */
+    numberOfQuestions: string;
+}
+
+export function validateQuiz(values: QuizFormValues): FieldErrors<QuizFormValues> {
+    const errors: FieldErrors<QuizFormValues> = {};
+
+    const topic = validateTopic(values.topic);
+    if (topic) errors.topic = topic;
+
+    if (!(QUIZ_DIFFICULTY_VALUES as readonly string[]).includes(values.difficulty)) {
+        errors.difficulty = "Choose Easy, Medium or Hard.";
+    }
+
+    const countText = values.numberOfQuestions.trim();
+    const count = Number(countText);
+    if (!countText) errors.numberOfQuestions = "Please enter the number of questions.";
+    else if (!Number.isInteger(count)) errors.numberOfQuestions = "The number of questions must be a whole number.";
+    else if (count < QUIZ_QUESTIONS_MIN || count > QUIZ_QUESTIONS_MAX) {
+        errors.numberOfQuestions = `Choose between ${QUIZ_QUESTIONS_MIN} and ${QUIZ_QUESTIONS_MAX} questions.`;
+    }
+
+    return errors;
+}
+
+/** Flashcard limits (AiRequestLimits / GenerateFlashcardsDto on the API). */
+export const FLASHCARDS_MIN = 1;
+export const FLASHCARDS_MAX = 30;
+
+export interface FlashcardsFormValues {
+    topic: string;
+    /** Raw input value (the number field can be empty while typing). */
+    numberOfCards: string;
+}
+
+export function validateFlashcards(values: FlashcardsFormValues): FieldErrors<FlashcardsFormValues> {
+    const errors: FieldErrors<FlashcardsFormValues> = {};
+
+    const topic = validateTopic(values.topic);
+    if (topic) errors.topic = topic;
+
+    const countText = values.numberOfCards.trim();
+    const count = Number(countText);
+    if (!countText) errors.numberOfCards = "Please enter the number of cards.";
+    else if (!Number.isInteger(count)) errors.numberOfCards = "The number of cards must be a whole number.";
+    else if (count < FLASHCARDS_MIN || count > FLASHCARDS_MAX) {
+        errors.numberOfCards = `Choose between ${FLASHCARDS_MIN} and ${FLASHCARDS_MAX} cards.`;
+    }
+
+    return errors;
+}
+
 /** Picks the first server message for each known form field (keys from parseApiError are camelCase). */
 export function pickFieldErrors<T>(
     serverErrors: Record<string, string[]>,
