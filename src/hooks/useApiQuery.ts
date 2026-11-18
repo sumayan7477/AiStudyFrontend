@@ -8,7 +8,8 @@ import { parseApiError, type ApiError } from "../api/errors";
  */
 const inFlight = new Map<string, Promise<unknown>>();
 
-function sharedRequest<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
+/** Also used directly by pages that keep their own state (e.g. chat conversations). */
+export function sharedRequest<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
     const existing = inFlight.get(key);
     if (existing) return existing as Promise<T>;
 

@@ -61,6 +61,7 @@ export default function AppRoutes() {
                     <Route path="/profile" element={<Profile />} />
 
                     <Route path="/chat" element={<Chat />} />
+                    <Route path="/chat/:sessionId" element={<Chat />} />
 
                     <Route path="/study-plans" element={<StudyPlans />} />
                     <Route path="/study-plans/:id" element={<StudyPlanDetails />} />

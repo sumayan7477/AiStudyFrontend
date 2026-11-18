@@ -80,6 +80,49 @@ export function validateTopic(topic: string): string | undefined {
     return undefined;
 }
 
+/** Study plan limits (AiRequestLimits / GenerateStudyPlanDto on the API). */
+export const DAILY_HOURS_MIN = 1;
+export const DAILY_HOURS_MAX = 16;
+export const EXAM_MAX_YEARS_AHEAD = 2;
+
+export interface StudyPlanFormValues {
+    subject: string;
+    /** Raw input value (the number field can be empty while typing). */
+    dailyHours: string;
+    /** "YYYY-MM-DD" from <input type="date">. */
+    examDate: string;
+}
+
+/**
+ * Mirrors the API: subject required (max 200), daily hours 1-16 (whole number),
+ * exam date from today up to `maxDate` (UTC today + 2 years, like the API).
+ * `minDate` / `maxDate` are "YYYY-MM-DD" strings, so they compare correctly as text.
+ */
+export function validateStudyPlan(
+    values: StudyPlanFormValues,
+    minDate: string,
+    maxDate: string,
+): FieldErrors<StudyPlanFormValues> {
+    const errors: FieldErrors<StudyPlanFormValues> = {};
+
+    const subject = values.subject.trim();
+    if (!subject) errors.subject = "Please enter a subject.";
+    else if (subject.length > TOPIC_MAX_LENGTH) errors.subject = `Subject must be at most ${TOPIC_MAX_LENGTH} characters.`;
+
+    const hoursText = values.dailyHours.trim();
+    const hours = Number(hoursText);
+    if (!hoursText) errors.dailyHours = "Please enter your daily study hours.";
+    else if (!Number.isInteger(hours)) errors.dailyHours = "Daily hours must be a whole number.";
+    else if (hours < DAILY_HOURS_MIN || hours > DAILY_HOURS_MAX) errors.dailyHours = `Daily hours must be between ${DAILY_HOURS_MIN} and ${DAILY_HOURS_MAX}.`;
+
+    if (!values.examDate) errors.examDate = "Please choose your exam date.";
+    else if (!/^\d{4}-\d{2}-\d{2}$/.test(values.examDate)) errors.examDate = "Enter a valid date.";
+    else if (values.examDate < minDate) errors.examDate = "Exam date must be today or in the future.";
+    else if (values.examDate > maxDate) errors.examDate = `Exam date must be within ${EXAM_MAX_YEARS_AHEAD} years.`;
+
+    return errors;
+}
+
 /** Picks the first server message for each known form field (keys from parseApiError are camelCase). */
 export function pickFieldErrors<T>(
     serverErrors: Record<string, string[]>,

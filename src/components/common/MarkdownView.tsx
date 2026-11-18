@@ -1,8 +1,12 @@
+import { useRef, useState } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Check, Copy } from "lucide-react";
 
 interface MarkdownViewProps {
     content: string;
+    /** Adds a "Copy code" button to code blocks (used in chat). Off by default. */
+    copyCode?: boolean;
 }
 
 /**
@@ -49,10 +53,44 @@ const components: Components = {
     img: ({ alt }) => <span className="italic text-gray-500">[image: {alt || "not shown"}]</span>,
 };
 
-const MarkdownView = ({ content }: MarkdownViewProps) => {
+/** Code block with a "Copy" button (copies the code's plain text). */
+const CopyablePre = ({ children }: { children?: React.ReactNode }) => {
+    const preRef = useRef<HTMLPreElement>(null);
+    const [status, setStatus] = useState<"idle" | "copied" | "failed">("idle");
+
+    const copy = async () => {
+        try {
+            await navigator.clipboard.writeText(preRef.current?.textContent ?? "");
+            setStatus("copied");
+        } catch {
+            setStatus("failed"); // e.g. clipboard permission denied
+        }
+        window.setTimeout(() => setStatus("idle"), 2000);
+    };
+
+    return (
+        <div className="relative mb-4">
+            <pre ref={preRef} className="overflow-x-auto rounded-lg bg-gray-900 p-4 pt-10 text-sm text-gray-100">
+                {children}
+            </pre>
+            <button
+                type="button"
+                onClick={copy}
+                className="absolute right-2 top-2 flex items-center gap-1 rounded bg-gray-700 px-2 py-1 text-xs text-gray-100 hover:bg-gray-600"
+            >
+                {status === "copied" ? <Check size={14} aria-hidden="true" /> : <Copy size={14} aria-hidden="true" />}
+                {status === "copied" ? "Copied" : status === "failed" ? "Copy failed" : "Copy code"}
+            </button>
+        </div>
+    );
+};
+
+const componentsWithCopy: Components = { ...components, pre: CopyablePre };
+
+const MarkdownView = ({ content, copyCode = false }: MarkdownViewProps) => {
     return (
         <div className="min-w-0 break-words text-gray-800">
-            <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml components={components}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml components={copyCode ? componentsWithCopy : components}>
                 {content}
             </ReactMarkdown>
         </div>
