@@ -1,14 +1,14 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/navbar/Navbar';
-
-// You can manage auth state here or use a context
-const isAuthenticated = false; // Replace with actual auth state
+import { useAuth } from '../context/useAuth';
 
 const MainLayout: React.FC = () => {
+  const { isAuthenticated, logout } = useAuth();
+
   return (
     <div className="min-h-screen bg-base-200">
-      <Navbar isAuthenticated={isAuthenticated} />
+      <Navbar isAuthenticated={isAuthenticated} onLogout={logout} />
       <main className="container mx-auto px-4 py-8">
         <Outlet />
       </main>

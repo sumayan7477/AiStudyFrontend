@@ -3,9 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   Bars3Icon, 
   XMarkIcon, 
-  HomeIcon, 
-  BookOpenIcon, 
-  ChatBubbleLeftRightIcon, 
+  HomeIcon,
+  ChatBubbleLeftRightIcon,
   ClipboardDocumentListIcon,
   AcademicCapIcon,
   DocumentTextIcon,

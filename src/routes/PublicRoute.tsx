@@ -1,8 +1,10 @@
-import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
+import { getRedirectTarget } from "./redirect";
 
 const PublicRoute = () => {
     const { isAuthenticated, loading } = useAuth();
+    const location = useLocation();
 
     if (loading) {
         return (
@@ -13,7 +15,8 @@ const PublicRoute = () => {
     }
 
     if (isAuthenticated) {
-        return <Navigate to="/dashboard" replace />;
+        // Signed-in users never stay on /login or /register.
+        return <Navigate to={getRedirectTarget(location.state)} replace />;
     }
 
     return <Outlet />;

@@ -1,7 +1,7 @@
 import { LogOut } from "lucide-react";
 import { navigation } from "../../utils/navigation";
 import SidebarItem from "./SidebarItem";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 
 const Sidebar = () => {
     const { logout } = useAuth();

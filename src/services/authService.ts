@@ -10,14 +10,19 @@ const authService = {
     login: async (data: LoginRequest): Promise<LoginResponse> => {
         const response = await api.post<LoginResponse>(
             "/Auth/login",
-            data
+            { email: data.email, password: data.password }
         );
 
         return response.data;
     },
 
     register: async (data: RegisterRequest): Promise<void> => {
-        await api.post("/Auth/register", data);
+        // Send only the fields the API accepts (never confirmPassword).
+        await api.post("/Auth/register", {
+            fullName: data.fullName,
+            email: data.email,
+            password: data.password,
+        });
     },
 
     me: async (): Promise<User> => {
