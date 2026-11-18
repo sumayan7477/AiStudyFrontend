@@ -70,6 +70,16 @@ export function validateLogin(values: LoginRequest): FieldErrors<LoginRequest> {
     return errors;
 }
 
+/** Topic/subject for AI generation (AiRequestLimits.MaxTopicLength on the API). */
+export const TOPIC_MAX_LENGTH = 200;
+
+export function validateTopic(topic: string): string | undefined {
+    const value = topic.trim();
+    if (!value) return "Please enter a topic.";
+    if (value.length > TOPIC_MAX_LENGTH) return `Topic must be at most ${TOPIC_MAX_LENGTH} characters.`;
+    return undefined;
+}
+
 /** Picks the first server message for each known form field (keys from parseApiError are camelCase). */
 export function pickFieldErrors<T>(
     serverErrors: Record<string, string[]>,

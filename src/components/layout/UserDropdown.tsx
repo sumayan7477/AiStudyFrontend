@@ -5,16 +5,16 @@ const UserDropdown = () => {
 
     return (
         <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-white">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white">
                 {user?.fullName?.charAt(0)}
             </div>
 
-            <div>
-                <p className="font-semibold">
+            <div className="hidden min-w-0 sm:block">
+                <p className="truncate font-semibold">
                     {user?.fullName}
                 </p>
 
-                <p className="text-sm text-gray-500">
+                <p className="hidden truncate text-sm text-gray-500 md:block">
                     {user?.email}
                 </p>
             </div>

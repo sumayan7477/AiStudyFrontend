@@ -11,7 +11,8 @@ import Home from "../pages/Home";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 
-import Dashboard from "../pages/Dashboard";
+// Explicit path: "../pages/Dashboard" would resolve to the old static stub pages/Dashboard.tsx.
+import Dashboard from "../pages/Dashboard/index";
 import Chat from "../pages/Chat";
 import StudyPlans from "../pages/StudyPlans";
 import StudyPlanDetails from "../pages/StudyPlans/Details";
